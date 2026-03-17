@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: dds-api
+    environment:
+      CORS_ORIGIN: http://localhost:8080
+    volumes:
+      - ./api/data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: dds-frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
