@@ -14,7 +14,6 @@ class SeriesRepository extends RepositorioBase{
     }
 
     async obtenerPlataformas() {
-        console.log("LLEGO?")
         return this.modelo.findAll({
             attributes: ["plataforma"]
         })

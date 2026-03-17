@@ -5,41 +5,62 @@ class temporadasService {
         return await temporadasRepository.obtenerTodos();
     }
 
+    validarDatosTemporada(data) {
+        const anioAct = new Date().getFullYear();
+        const idSerie = Number.parseInt(data.idSerie, 10);
+        const numero = Number.parseInt(data.numero, 10);
+        const episodios = Number.parseInt(data.episodios, 10);
+        const anioEstreno = Number.parseInt(data.anioEstreno, 10);
+
+        if (!Number.isInteger(idSerie) || idSerie <= 0) {
+            throw new Error("idSerie invalido");
+        }
+        if (!Number.isInteger(numero) || numero <= 0) {
+            throw new Error("El numero de temporada debe ser mayor a cero");
+        }
+        if (!Number.isInteger(episodios) || episodios <= 0) {
+            throw new Error("La cantidad de episodios debe ser mayor a cero");
+        }
+        if (!Number.isInteger(anioEstreno) || anioEstreno < 1900 || anioEstreno > anioAct) {
+            throw new Error("El anio de estreno debe estar entre 1900 y el anio actual");
+        }
+        if (typeof data.genero !== "string" || data.genero.trim() === "") {
+            throw new Error("El genero es obligatorio");
+        }
+        if (typeof data.creador !== "string" || data.creador.trim() === "") {
+            throw new Error("El creador es obligatorio");
+        }
+
+        return {
+            ...data,
+            idSerie,
+            numero,
+            episodios,
+            anioEstreno,
+            genero: data.genero.trim(),
+            creador: data.creador.trim()
+        };
+    }
+
     async crear(data) {
-        console.log("CREAR SERVICE----------------------------------", data)
-        /*
-        El número de temporada no puede repetirse para la misma serie.
-        El año de estreno no puede ser menor que 1900 ni mayor al año actual.
-        El número de episodios debe ser mayor a cero*/
-        const existe = await temporadasRepository.ExistePorTySCrear(data.idSerie, data.numero)
+        const payload = this.validarDatosTemporada(data);
+
+        const existe = await temporadasRepository.ExistePorTySCrear(payload.idSerie, payload.numero)
         if (existe) {
             throw new Error("No puede crear, ya existe una temporada con ese numero para una serie")
         }
-        
-        const anioAct = new Date().getFullYear(); //me lo hizo gpt xd
-        if (data.anioEstreno < 1900 || data.anioEstreno > anioAct) {
-            throw new Error("No se puede crear, el año de la pelicula no cumple las validaciones de fecha...")
-        }
-        if (data.episodios <= 0) {
-            throw new Error("No se puede crear, la cantidad de episodios con es positiva")
-        }
-        return await temporadasRepository.crear(data)
+
+        return await temporadasRepository.crear(payload)
     }
 
     async actualizar(id, data) {
-        console.log("ACTUALIZAR SERVICE----------------------------------", id, data)
-        const existe = await temporadasRepository.ExistePorTySActualizar(data.idSerie, data.numero, id) //mandandolo aca evito q coincida con el mismo id de la temproada q estoy intentando actualizar
+        const payload = this.validarDatosTemporada(data);
+
+        const existe = await temporadasRepository.ExistePorTySActualizar(payload.idSerie, payload.numero, id)
         if (existe) {
             throw new Error("No puede crear, ya existe una temporada con ese numero para una serie")
         }
-        const anioAct = new Date().getFullYear(); //me lo hizo gpt xd
-        if (data.anioEstreno < 1900 || data.anioEstreno > anioAct) {
-            throw new Error("No se puede crear, el año de la pelicula no cumple las validaciones de fecha...")
-        }
-        if (data.episodios <= 0) {
-            throw new Error("No se puede crear, la cantidad de episodios con es positiva")
-        }
-        return await temporadasRepository.actualizar(id, data)
+        return await temporadasRepository.actualizar(id, payload)
     }
 
     async eliminar(id) {

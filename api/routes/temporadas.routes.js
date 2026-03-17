@@ -8,36 +8,44 @@ router.get("/", async (req, res) => {
         const tmps = await temporadasService.obtenerTodos();
         res.json(tmps);
     }catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: "No se pudieron obtener las temporadas" })
     }
 });
 
 router.post("/", async (req, res) => {
-    console.log("CREANDO? ROUTERS-----------------------", req.body)
     try {
         const crear = await temporadasService.crear(req.body);
         res.status(201).json(crear);
     } catch (err) {
-        res.status(500).json({error:err.message})
+        res.status(400).json({ error: err.message })
     }
 });
 
 router.put("/:id", async (req, res) => {
-    console.log("ACTUALIZANOD ROTUERS?------------------------" ,parseInt(req.params.id),"req body: ", req.body)
     try {
-        const actualizado = await temporadasService.actualizar(parseInt(req.params.id),req.body);
+        const idNumero = Number.parseInt(req.params.id, 10);
+        if (!Number.isInteger(idNumero) || idNumero <= 0) {
+            return res.status(400).json({ error: "Id invalido" });
+        }
+
+        const actualizado = await temporadasService.actualizar(idNumero, req.body);
         res.json(actualizado);
     }catch (err) {
-        res.status(400).json({error:err.message}) //no ecnotrado
+        res.status(400).json({ error: err.message })
     }
 });
 
 router.delete("/:id", async (req, res) => {
     try {
-        await temporadasService.eliminar(parseInt(req.params.id))
+        const idNumero = Number.parseInt(req.params.id, 10);
+        if (!Number.isInteger(idNumero) || idNumero <= 0) {
+            return res.status(400).json({ error: "Id invalido" });
+        }
+
+        await temporadasService.eliminar(idNumero)
         res.status(204).end();
     }catch(err){
-        res.status(500).json({error:err.message})
+        res.status(400).json({ error: err.message })
     }
 });
 
@@ -46,7 +54,7 @@ router.get("/filtrado", async (req, res) => {
         const filtrado = await temporadasService.obtenerFiltrados(req.query)
         res.json(filtrado)
     }catch (err) {
-        res.status(400).json({error:err.message})
+        res.status(500).json({ error: "No se pudieron filtrar las temporadas" })
     }
 });
 
@@ -55,7 +63,7 @@ router.get("/generos", async (req, res) => {
         const generos = await temporadasService.obtenerGeneros()
         res.json(generos)
     }catch (err) {
-        res.status(500).json({error:err.message})
+        res.status(500).json({ error: "No se pudieron obtener los generos" })
     }
 });
 
@@ -69,10 +77,19 @@ router.get("/generos", async (req, res) => {
 
 router.get("/:id", async (req,res) => {
     try {
-        const id = await temporadasService.obtenerPorId(parseInt(req.params.id))
-        res.json(id)
+        const idNumero = Number.parseInt(req.params.id, 10);
+        if (!Number.isInteger(idNumero) || idNumero <= 0) {
+            return res.status(400).json({ error: "Id invalido" });
+        }
+
+        const temporada = await temporadasService.obtenerPorId(idNumero)
+        if (!temporada) {
+            return res.status(404).json({ error: "Temporada no encontrada" });
+        }
+
+        res.json(temporada)
     }catch (err) {
-        res.status(500).json({error:err.message})
+        res.status(500).json({ error: "No se pudo obtener la temporada" })
     }
 });
 

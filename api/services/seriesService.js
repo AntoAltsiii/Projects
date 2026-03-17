@@ -9,7 +9,6 @@ class seriesService {
     }
 
     async obtenerPlataformas() {
-        console.log("PLATAFORMAS SERIVCE------------------")
         return await seriesRepository.obtenerPlataformas()
     }
 }

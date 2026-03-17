@@ -8,7 +8,7 @@ import seriesRouter from "./routes/series.routes.js"
 
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
 
 app.use(cors({
@@ -18,7 +18,7 @@ app.use(cors({
 }));
 
 app
-  .use(express.json())
+  .use(express.json({ limit: "100kb" }))
   .use(express.urlencoded({ extended: true }));
   
 app.use(logger);
@@ -52,15 +52,23 @@ app
   //.use("/api/plataformas", plataformasRouter);
 
 app.use((req, res) => {
-  res.status(404).json({error: "Ruta no ecnontrada..."})
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
+
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Error interno del servidor" });
 });
 
 (async function start() {
-    // Validar conexión a la base de datos.
+  try {
     await sequelize.authenticate();
 
-    // Iniciar el servidor
     app.listen(PORT, () => {
-        console.log(`Servidor iniciado y escuchando en el puerto ${PORT}`);
+      console.log(`Servidor iniciado y escuchando en el puerto ${PORT}`);
     });
+  } catch (error) {
+    console.error("No se pudo iniciar la API:", error);
+    process.exit(1);
+  }
 })();

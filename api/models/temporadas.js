@@ -47,7 +47,14 @@
             sequelize,
             modelName: "Temporadas",
             tableName: "Temporadas",
-            timestamps: false
+            timestamps: false,
+            indexes: [
+                {
+                    name: "uq_temporada_serie_numero",
+                    unique: true,
+                    fields: ["idSerie", "numero"]
+                }
+            ]
         }
     );
     Temporadas.belongsTo(Series, {
