@@ -1,103 +1,28 @@
-# Parcial 2 - Gestion de Series y Temporadas
+# Procesador de Texto - Analizador de Frecuencia
 
-Proyecto full stack con frontend en React y backend en Node.js/Express. Permite listar, filtrar, crear, editar y eliminar temporadas asociadas a series.
+Este proyecto es una herramienta simple de línea de comandos diseñada para analizar la frecuencia de palabras en un archivo de texto.
 
-## Stack tecnologico
+## Estructura del Proyecto
+- `src/analizador.py`: Script principal que realiza el procesamiento.
+- `data/`: Carpeta destinada a los archivos de entrada (se incluye `texto_prueba.txt`).
 
-- Frontend: React, Vite, React Router, React Hook Form, Axios, Bootstrap.
-- Backend: Node.js, Express, Sequelize.
-- Base de datos: SQLite (archivo local).
-- Contenedores: Docker + Docker Compose (frontend + backend).
+## Toma de Decisiones y Arquitectura
+Originalmente, el repositorio contenía una estructura compleja de microservicios y contenedores (API, Frontend, Docker). Tras una revisión y simplificación, se tomaron las siguientes decisiones:
 
-## Estructura del proyecto
+1. **Simplicidad**: Se eliminó la arquitectura web (frontend/backend) por no ser necesaria para el objetivo de análisis de texto simple.
+2. **Portabilidad**: Se eliminó Docker para permitir una ejecución directa en cualquier entorno con Python instalado.
+3. **Enfoque en Scripting**: El proyecto se consolidó en un único script de Python (`src/analizador.py`), facilitando la depuración y el mantenimiento.
+4. **Alimentación de Datos**: Se mantiene una carpeta `data` separada para organizar los archivos de entrada, manteniendo el código fuente limpio.
 
-- api: API REST, modelos, servicios, repositorios y persistencia SQLite.
-- frontend: SPA React, rutas y componentes de interfaz.
-- docker-compose.yml: orquestacion de ambos servicios.
-
-## Requisitos
-
-- Node.js 20+ y npm.
-- Docker Desktop (opcional, para ejecucion en contenedores).
-
-## Variables de entorno
-
-No se suben al repositorio los archivos .env. Usa estos ejemplos:
-
-- api/.env.example
-- frontend/.env.example
-
-Variables disponibles:
-
-- CORS_ORIGIN: origen permitido para CORS en la API.
-- VITE_API_URL: URL base de la API consumida por el frontend.
-
-## Ejecucion local (sin Docker)
-
-1. Instalar dependencias del backend:
-
+## Cómo Ejecutar
+Asegúrate de tener Python instalado y ejecuta:
 ```bash
-cd api
-npm install
+python src/analizador.py
 ```
 
-2. Levantar backend:
+## Preparación para ZIP
+Este proyecto está preparado para ser comprimido. No incluye entornos virtuales (`venv`), archivos de compilación, ni contenedores pesados.
 
-```bash
-npm run dev
-```
-
-La API quedara en http://localhost:3000
-
-3. En otra terminal, instalar dependencias del frontend:
-
-```bash
-cd frontend
-npm install
-```
-
-4. Levantar frontend:
-
-```bash
-npm run dev
-```
-
-La app quedara en http://localhost:5173
-
-## Ejecucion con Docker
-
-Desde la raiz del proyecto:
-
-1. Construir e iniciar servicios:
-
-```bash
-docker compose up --build -d
-```
-
-2. Ver estado:
-
-```bash
-docker compose ps
-```
-
-3. Ver logs:
-
-```bash
-docker compose logs -f
-```
-
-4. Detener servicios:
-
-```bash
-docker compose down
-```
-
-Puertos por defecto:
-
-- Frontend: http://localhost:8080
-- Backend: interno en Docker (no expuesto al host)
-
-La app se usa desde una sola URL publica: http://localhost:8080.
 Las llamadas a /api se enrutan automaticamente desde Nginx al contenedor backend.
 
 ## Seguridad y buenas practicas de versionado
