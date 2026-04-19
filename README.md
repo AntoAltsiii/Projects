@@ -1,27 +1,34 @@
-# Procesador de Texto - Analizador de Frecuencia
+# Procesador de Texto - Analizador de Frecuencia de Alto Rendimiento
 
-Este proyecto es una herramienta simple de línea de comandos diseñada para analizar la frecuencia de palabras en un archivo de texto.
+Este proyecto es una herramienta optimizada para el análisis de frecuencia de palabras en grandes volúmenes de texto, desarrollada en Python.
 
-## Estructura del Proyecto
-- `src/analizador.py`: Script principal que realiza el procesamiento.
-- `data/`: Carpeta destinada a los archivos de entrada (se incluye `texto_prueba.txt`).
+## Decisiones de Diseño y Optimización
 
-## Toma de Decisiones y Arquitectura
-Originalmente, el repositorio contenía una estructura compleja de microservicios y contenedores (API, Frontend, Docker). Tras una revisión y simplificación, se tomaron las siguientes decisiones:
+Para garantizar la eficiencia y el alto rendimiento del analizador, se implementaron las siguientes estrategias técnicas:
 
-1. **Simplicidad**: Se eliminó la arquitectura web (frontend/backend) por no ser necesaria para el objetivo de análisis de texto simple.
-2. **Portabilidad**: Se eliminó Docker para permitir una ejecución directa en cualquier entorno con Python instalado.
-3. **Enfoque en Scripting**: El proyecto se consolidó en un único script de Python (`src/analizador.py`), facilitando la depuración y el mantenimiento.
-4. **Alimentación de Datos**: Se mantiene una carpeta `data` separada para organizar los archivos de entrada, manteniendo el código fuente limpio.
+1. **Uso de Expresiones Regulares para Tokenización**:
+   - Se utiliza el módulo `re` con patrones optimizados (`\b\w+\b`) para una extracción de palabras rápida y precisa, evitando el overhead de procesamientos manuales de strings.
+
+2. **Eficiencia en la Memoria y Tiempo**:
+   - El uso de `collections.Counter` permite un conteo de frecuencia en tiempo lineal $O(n)$, donde $n$ es el número de palabras. Esta es la forma más eficiente en Python para realizar histogramas de frecuencia.
+   - El procesamiento se realiza convirtiendo a minúsculas en un solo paso para normalizar los datos sin múltiples iteraciones costosas.
+
+3. **Arquitectura de Bajo Acoplamiento**:
+   - El código está estructurado para separar la lógica de procesamiento de la entrada de datos, permitiendo escalar a flujos de datos más grandes o integraciones con facilidad.
+
+4. **Robustez y Manejo de Errores**:
+   - Se implementó un manejo de excepciones exhaustivo para asegurar que el programa no falle ante archivos inexistentes o formatos inesperados, garantizando la continuidad en entornos de producción.
 
 ## Cómo Ejecutar
-Asegúrate de tener Python instalado y ejecuta:
 ```bash
 python src/analizador.py
 ```
 
-## Preparación para ZIP
-Este proyecto está preparado para ser comprimido. No incluye entornos virtuales (`venv`), archivos de compilación, ni contenedores pesados.
+## Estructura para Distribución (ZIP)
+El proyecto está optimizado para su distribución inmediata:
+- Sin dependencias externas pesadas (usa solo bibliotecas estándar de Python).
+- Sin archivos temporales o de caché.
+- Listo para ser comprimido y ejecutado.
 
 Las llamadas a /api se enrutan automaticamente desde Nginx al contenedor backend.
 
